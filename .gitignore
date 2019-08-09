@@ -1,0 +1,9 @@
+/cmake-build-debug/
+*.idea*
+*.out*
+.DS_Store
+*.dSYM
+*.o
+temp
+*.a
+ft_ls

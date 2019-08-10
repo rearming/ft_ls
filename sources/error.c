@@ -1,19 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_errors.h                                        :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sleonard <sleonard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/05/23 19:11:02 by sleonard          #+#    #+#             */
-/*   Updated: 2019/08/09 16:59:06 by sleonard         ###   ########.fr       */
+/*   Created: 2019/08/10 18:58:37 by sleonard          #+#    #+#             */
+/*   Updated: 2019/08/10 19:26:35 by sleonard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_ERRORS_H
-# define FT_ERRORS_H
+#include "ft_ls.h"
 
-# define ERR_MALLOC 100
-# define ERR_NULL_LIST 101
-
-#endif
+void	raise_error(int err_code)
+{
+	exit(err_code);
+}

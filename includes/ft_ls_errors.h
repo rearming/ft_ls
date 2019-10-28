@@ -6,7 +6,7 @@
 /*   By: sleonard <sleonard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/23 19:11:02 by sleonard          #+#    #+#             */
-/*   Updated: 2019/08/09 16:59:06 by sleonard         ###   ########.fr       */
+/*   Updated: 2019/10/28 15:52:39 by sleonard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,5 +15,7 @@
 
 # define ERR_MALLOC 100
 # define ERR_NULL_LIST 101
+# define ERR_LSTAT 102
+# define ERR_OPENDIR 103
 
 #endif

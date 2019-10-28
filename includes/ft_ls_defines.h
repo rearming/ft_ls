@@ -6,11 +6,13 @@
 /*   By: sleonard <sleonard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/08/09 19:48:44 by sleonard          #+#    #+#             */
-/*   Updated: 2019/08/09 19:48:44 by sleonard         ###   ########.fr       */
+/*   Updated: 2019/10/28 20:54:48 by sleonard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_LS_DEFINES_H
 # define FT_LS_DEFINES_H
+
+# define FT_ERR (-1)
 
 #endif

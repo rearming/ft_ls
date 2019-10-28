@@ -6,7 +6,7 @@
 /*   By: sleonard <sleonard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/25 18:07:52 by sleonard          #+#    #+#             */
-/*   Updated: 2019/10/25 18:36:27 by sleonard         ###   ########.fr       */
+/*   Updated: 2019/10/28 20:14:35 by sleonard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@ typedef struct dirent		t_dirent;
 typedef struct stat			t_stat;
 typedef unsigned char		t_flag;
 
-# define MEM_BLOCK_SIZE 20000000
-typedef struct			s_memblock
+typedef struct			s_dirstruct
 {
-	unsigned char		*begin;
-	size_t				allocated;
-}						t_memblock;
+	char				*dirname;
+	size_t				total_len;
+	t_flag				is_dir;
+}						t_dirstruct;
 
 typedef struct			s_file_info
 {

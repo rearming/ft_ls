@@ -26,13 +26,40 @@
 # include "ft_ls_errors.h"
 # include "ft_ls_defines.h"
 
-extern t_list		*g_lstbuf;
+/*
+**	Core functions
+*/
 
-void	print_file_info(t_file_info *info);
-void	recursive_btree(void *dirstruct_ptr);
-void	recursive_list(char *dirname, size_t total_len);
-void	raise_error(int err_code);
+t_avl_tree *get_dir_btree(char *dirname, size_t relative_path_name_len);
+void		start_recursion(char *dirname);
+void		ls_recursive(void *filestruct_ptr, t_flag is_first_dir);
+t_options	get_options(char **args, int options_num, int *first_filename);
+void		print_file_formatted(void *filestruct_ptr);
 
-t_dirstruct *get_dirstruct(char *name, size_t total_len, t_flag is_dir);
+/*
+**	Comparers
+*/
+int			generic_cmpfunc(void *dir1_ptr, void *dir2_ptr);
+
+/*
+**	Helpers
+*/
+
+t_filestruct *get_filestruct(char *relative_path_name, size_t total_len, t_flag is_dir,
+							 t_file_info *file_info);
+void		free_filestruct(void *filestruct_ptr);
+int			is_dir_not_dot(mode_t st_mode, char *dirname);
+
+/*
+**	Error management
+*/
+
+void		raise_error(int err_code);
+
+/*
+**	Debug functions
+*/
+
+void		print_file_info(t_file_info *info);
 
 #endif

@@ -17,5 +17,8 @@
 # define ERR_NULL_LIST 101
 # define ERR_LSTAT 102
 # define ERR_OPENDIR 103
+# define ERR_UNKNOWN_TIME 104
+# define ERR_UNKNOWN_SORT 105
+
 
 #endif

@@ -14,5 +14,6 @@
 # define FT_LS_DEFINES_H
 
 # define FT_ERR (-1)
+# define NO_FILE_SPECIFIED (-1)
 
 #endif

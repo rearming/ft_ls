@@ -12,13 +12,12 @@
 
 #include "ft_ls.h"
 
-t_list		*g_lstbuf;
+t_options	g_options;
+int			g_longest_filename = 0;
 
 void	print_file_info(t_file_info *info)
 {
 	ft_putchar('\n');
-	if (!S_ISDIR(info->file.st_mode))
-		return ;
 	ft_printf("is dir: %i\n", S_ISDIR(info->file.st_mode));
 	ft_printf("name: [%s]\n", info->dir->d_name);
 	ft_printf("type: [%hhu]\n", info->dir->d_type);
@@ -37,27 +36,51 @@ void	print_file_info(t_file_info *info)
 	ft_putchar('\n');
 }
 
-inline t_dirstruct *get_dirstruct(char *name, size_t total_len, t_flag is_dir)
+void	start_recursion(char *dirname)
 {
-	t_dirstruct		*result;
+	t_filestruct		*filestruct;
 
-	if (!(result = (t_dirstruct*)malloc(sizeof(t_dirstruct))))
-		raise_error(ERR_MALLOC);
-	result->dirname = name;
-	result->total_len = total_len;
-	result->is_dir = is_dir;
-	return (result);
+	filestruct = get_filestruct(
+			ft_strdup(dirname),
+			ft_strlen(dirname),
+			TRUE,NULL);
+	ls_recursive(filestruct, TRUE);
+	free_filestruct(filestruct);
 }
 
-void	recursion_wrapeer(char *startdir, int dirname_len)
+
+
+void	get_directory_info(char *dirname)
 {
-	recursive_btree(get_dirstruct(startdir, dirname_len, 0)); //with avl tree
-//	recursive_list(startdir, dirname_len); //with lists
+	t_avl_tree		*tree;
+
+	tree = get_dir_btree(dirname, ft_strlen(dirname));
+	btree_apply_inorder((t_btree *) tree, print_file_formatted);
+	free_btree(tree, free_filestruct);
+}
+
+void	process_dir(char *dirname)
+{
+	if (g_options.is_recursive)
+		start_recursion(dirname);
+	else
+		get_directory_info(dirname);
 }
 
 int		main(int argc, char **argv)
 {
-	(void)argc;
-	g_lstbuf = NULL;
-	recursion_wrapeer(ft_strdup(argv[1]), ft_strlen(argv[1]));
+	int		first_filename;
+	int		i;
+
+	first_filename = 0;
+	g_options = get_options(++argv, --argc, &first_filename);
+	i = first_filename;
+	if (i == argc)
+		process_dir(".");
+	while (i < argc)
+	{
+		process_dir(argv[i]);
+		i++;
+	}
+	return (0);
 }

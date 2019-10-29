@@ -25,12 +25,15 @@ link_directories(
 
 set(main
         sources/ft_ls.c
-        sources/search_recursive.c
+        sources/ls_recursive.c
         sources/error.c
-        )
+        sources/directory_tree_getter.c
+        sources/compare_functions.c
+        sources/filestruct_functions.c
+        sources/options_parser.c sources/print_formatted.c)
 
 set(test
-        tests/profiling_test.c)
+        tests/profiling_test.c tests/test_R.c)
 
 
 add_executable(ft_ls

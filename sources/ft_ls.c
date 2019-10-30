@@ -13,28 +13,6 @@
 #include "ft_ls.h"
 
 t_options	g_options;
-int			g_longest_filename = 0;
-
-void	print_file_info(t_file_info *info)
-{
-	ft_putchar('\n');
-	ft_printf("is dir: %i\n", S_ISDIR(info->file.st_mode));
-	ft_printf("name: [%s]\n", info->dir->d_name);
-	ft_printf("type: [%hhu]\n", info->dir->d_type);
-	ft_printf("inode: [%llu]\n", info->dir->d_ino);
-	ft_printf("-------------------------------\n");
-	ft_printf("file size: [%lli]\n", info->file.st_size);
-	ft_printf("block's alloced: [%lli]\n", info->file.st_blocks);
-	ft_printf("file's flags: [%u]\n", info->file.st_flags);
-	ft_printf("number of links: [%i]\n", info->file.st_nlink);
-	ft_printf("file's mode: [%u]\n", info->file.st_mode);
-	ft_printf("-------------------------------\n");
-	ft_printf("last access: %s", ctime(&info->file.st_atimespec.tv_sec));
-	ft_printf("last modification: %s", ctime(&info->file.st_mtimespec.tv_sec));
-	ft_printf("last status change: %s", ctime(&info->file.st_ctimespec.tv_sec));
-	ft_printf("creation time: %s", ctime(&info->file.st_birthtimespec.tv_sec));
-	ft_putchar('\n');
-}
 
 void	start_recursion(char *dirname)
 {
@@ -48,15 +26,14 @@ void	start_recursion(char *dirname)
 	free_filestruct(filestruct);
 }
 
-
-
 void	get_directory_info(char *dirname)
 {
-	t_avl_tree		*tree;
+	t_dirstruct		*dirstruct;
 
-	tree = get_dir_btree(dirname, ft_strlen(dirname));
-	btree_apply_inorder((t_btree *) tree, print_file_formatted);
-	free_btree(tree, free_filestruct);
+	dirstruct = get_dir_btree(dirname, ft_strlen(dirname));
+	ls_apply_inorder(dirstruct->tree, print_file_formatted, &dirstruct->longest);
+	free_btree(dirstruct->tree, free_filestruct);
+	free(dirstruct);
 }
 
 void	process_dir(char *dirname)
@@ -79,7 +56,8 @@ int		main(int argc, char **argv)
 		process_dir(".");
 	while (i < argc)
 	{
-		process_dir(argv[i]);
+		process_dir(argv[i]); // тут тоже надо в бинарое дерево заносить, потому что оно сука сортированно должно читаться
+		//todo если директорий указано несколько,
 		i++;
 	}
 	return (0);

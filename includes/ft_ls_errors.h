@@ -19,6 +19,6 @@
 # define ERR_OPENDIR 103
 # define ERR_UNKNOWN_TIME 104
 # define ERR_UNKNOWN_SORT 105
-
+# define ERR_READLINK 106
 
 #endif

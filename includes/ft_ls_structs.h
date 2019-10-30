@@ -25,21 +25,38 @@ typedef struct			s_filestruct
 	size_t				total_len;
 	t_flag				is_dir;
 	t_flag				is_hidden;
-	long				last_access;
-	long				last_modif;
-	long				last_change;
+	nlink_t				hard_links;
+	char*				user_name;
+	char*				group_name;
+	off_t				file_size;
+	time_t				last_access;
+	time_t				last_modif;
+	time_t				last_change;
 	mode_t				st_mode;
 	blkcnt_t			st_blocks; //то, что показывается в total
-	off_t				file_size;
 	__uint64_t			inode;
-	nlink_t				hard_links;
-	uid_t				user_id;
-	gid_t				group_id;
 }						t_filestruct;
+
+typedef	struct			s_longest_strs
+{
+	int					filename;
+	int					h_links;
+	int					user_name;
+	int					group_name;
+	int					file_size;
+}						t_longest_strs;
+
+typedef	struct			s_dirstruct
+{
+	t_avl_tree			*tree;
+	long long			total_blocks;
+	t_longest_strs		longest;
+	//todo для выравнивания по терминалу может понадобиться (кол-во файлов * макс размер имени) чтобы поставить \n
+}						t_dirstruct;
 
 typedef struct			s_file_info
 {
-	t_dirent			*dir;
+	t_dirent			*dirent;
 	t_stat				file;
 }						t_file_info;
 
@@ -71,6 +88,5 @@ typedef struct			s_options
 }						t_options;
 
 extern t_options		g_options;
-extern int				g_longest_filename;
 
 #endif

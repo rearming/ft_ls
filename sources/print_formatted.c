@@ -1,13 +1,26 @@
-#include <pwd.h>
-#include <grp.h>
 #include "ft_ls.h"
+
+void	ls_apply_inorder(t_avl_tree *tree, void (*applyf)(const t_filestruct*,
+		 	const t_longest_strs*), const t_longest_strs *l_strs)
+{
+	if (!tree)
+		return ;
+	ls_apply_inorder(tree->left, applyf, l_strs);
+	applyf(tree->data, l_strs);
+	ls_apply_inorder(tree->right, applyf, l_strs);
+}
 
 static inline char	*get_rights(mode_t st_mode)
 {
 	char	*rights;
 
 	rights = (char*)malloc(11);
-	rights[0] = (S_ISDIR(st_mode)) ? 'd' : '-';
+	if (S_ISDIR(st_mode))
+		rights[0] = 'd';
+	else if (S_ISLNK(st_mode))
+		rights[0] = 'l';
+	else
+		rights[0] = '-';
 	rights[1] = (st_mode & S_IRUSR) ? 'r' : '-';
 	rights[2] = (st_mode & S_IWUSR) ? 'w' : '-';
 	rights[3] = (st_mode & S_IXUSR) ? 'x' : '-';
@@ -21,35 +34,76 @@ static inline char	*get_rights(mode_t st_mode)
 	return rights;
 }
 
-void	print_file_formatted(void *filestruct_ptr)
+static inline char	*get_formatted_time(const t_filestruct *filestruct)
 {
-	t_filestruct		*file;
-	char				*rights;
-	char				*time_str;
+	char		*result;
+	time_t		timestamp;
 
-	file = (t_filestruct*)filestruct_ptr;
-	if (file->is_dir)
+	if (g_options.time_mode == MODIFICATION)
+		timestamp = filestruct->last_modif;
+	if (g_options.time_mode == ACCESS)
+		timestamp = filestruct->last_access;
+	if (g_options.time_mode == STATUS_MODIFICATION)
+		timestamp = filestruct->last_change;
+	result = ctime(&timestamp);
+	result[24] = 0;
+	result = &result[4];
+	if (time(NULL) - timestamp >= SIX_MONTH)
+	{
+		ft_memcpy(&result[6], &result[15], 5);
+		result[11] = ' ';
+		result[12] = '\0';
+	}
+	else
+		result[12] = '\0';
+	return (result);
+}
+
+static inline char *get_link_str(const char *path, t_flag is_link, off_t link_len)
+{
+	char		arrow[] = " -> ";
+	char		*link_str;
+	size_t		buff_size;
+
+	if (!is_link)
+		return "";
+	buff_size = (link_len != 0 ? link_len : PATH_MAX) + 4; // +4 для стрелочки [ -> ]
+	link_str = (char*)malloc(sizeof(char) * buff_size + 1); //todo нужна ли проверка на ошибку (-1) ?
+	buff_size = readlink(path, &link_str[4], buff_size) + 4;
+	ft_memcpy(link_str, arrow, 4);
+	link_str[buff_size] = '\0';
+	return (link_str);
+}
+
+void	print_file_formatted(const t_filestruct *filestruct, const t_longest_strs *l_strs)
+{
+	char				*rights;
+
+	filestruct = (t_filestruct*)filestruct;
+	if (filestruct->is_dir)
 		return ;
 	if (!g_options.is_verbose)
 	{
 		if (g_options.is_one_column)
-			ft_printf("%s\n", file->filename);
+			ft_printf("%s\n", filestruct->filename);
 		else
-			ft_printf("%-*s", g_longest_filename + 1, file->filename); //todo сделать нормальные колонки
+			ft_printf("%-*s", l_strs->filename + 1, filestruct->filename); //todo сделать по размеру терминала
 		return ;
 	}
-	char	*format = "%s\t%i\t%s\t%s\t%lli\t%s\t%s\n";
-	rights = get_rights(file->st_mode);
-	time_str = ft_trim_c(ctime(&file->last_modif), '\n'); //todo format date
-	ft_printf(format,
+	rights = get_rights(filestruct->st_mode);
+	printf("%s %*i %*s %*s %*lli %s %s%s\n",
 			rights,
-			file->hard_links,
-			getpwuid(file->user_id)->pw_name,
-			getgrgid(file->group_id)->gr_name,
-			file->file_size,
-			time_str,
-			file->filename
+			l_strs->h_links + 1,
+			filestruct->hard_links,
+			l_strs->user_name,
+			filestruct->user_name,
+			l_strs->group_name + 1,
+			filestruct->group_name,
+			l_strs->file_size + 1,
+		    filestruct->file_size,
+		    get_formatted_time(filestruct),
+			filestruct->filename,
+			get_link_str(filestruct->full_path, rights[0] == 'l', filestruct->file_size)
 			);
 	free(rights);
-	//todo "total (block size)"
 }

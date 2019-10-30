@@ -28,16 +28,16 @@ void				free_filestruct(void *filestruct_ptr)
 	free(filestruct);
 }
 
-inline t_filestruct *get_filestruct(char *relative_path_name, size_t total_len, t_flag is_dir,
-									t_file_info *file_info)
+inline t_filestruct *get_filestruct(char *relative_path_name, size_t total_len,
+						t_flag is_dir, t_file_info *file_info)
 {
 	t_filestruct		*result;
 
 	if (!(result = (t_filestruct*)malloc(sizeof(t_filestruct))))
 		raise_error(ERR_MALLOC);
 	result->full_path = relative_path_name;
-	if (!is_dir)
-		result->filename = ft_strdup_l(file_info->dir->d_name, file_info->dir->d_namlen);
+	if (!is_dir && file_info->dirent)
+		result->filename = ft_strdup_l(file_info->dirent->d_name, file_info->dirent->d_namlen);
 	else
 		result->filename = relative_path_name;
 	result->total_len = total_len;
@@ -45,7 +45,8 @@ inline t_filestruct *get_filestruct(char *relative_path_name, size_t total_len, 
 		return (result);
 	result->is_dir = is_dir;
 	result->st_mode = file_info->file.st_mode;
-	result->is_hidden = file_info->dir->d_name[0] == '.' ? TRUE : FALSE;
+	if (file_info->dirent)
+		result->is_hidden = file_info->dirent->d_name[0] == '.' ? TRUE : FALSE;
 	result->last_access = file_info->file.st_atimespec.tv_sec;
 	result->last_modif = file_info->file.st_mtimespec.tv_sec;
 	result->last_change = file_info->file.st_ctimespec.tv_sec;
@@ -53,7 +54,7 @@ inline t_filestruct *get_filestruct(char *relative_path_name, size_t total_len, 
 	result->inode = file_info->file.st_ino;
 	result->file_size = file_info->file.st_size;
 	result->hard_links = file_info->file.st_nlink;
-	result->user_id = file_info->file.st_uid;
-	result->group_id = file_info->file.st_gid;
+	result->user_name = getpwuid(file_info->file.st_uid)->pw_name;
+	result->group_name = getgrgid(file_info->file.st_gid)->gr_name;
 	return (result);
 }

@@ -16,5 +16,7 @@ void	raise_error(int err_code)
 {
 	if (err_code == ERR_LSTAT)
 		ft_printf("lstat() failed, errno: [%s]\n", strerror(errno));
+	if (err_code == ERR_READLINK)
+		ft_printf("readlink() failed, errno: [%s]\n", strerror(errno));
 	exit(err_code);
 }

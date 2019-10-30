@@ -15,5 +15,6 @@
 
 # define FT_ERR (-1)
 # define NO_FILE_SPECIFIED (-1)
+# define SIX_MONTH 15552000
 
 #endif

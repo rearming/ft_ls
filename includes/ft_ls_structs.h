@@ -23,7 +23,7 @@ typedef struct			s_filestruct
 	char				*filename;
 	char				*full_path;
 	size_t				total_len;
-	t_flag				is_dir;
+	t_flag				is_dir_recursive;
 	t_flag				is_hidden;
 	nlink_t				hard_links;
 	char*				user_name;
@@ -85,8 +85,10 @@ typedef struct			s_options
 	t_flag				human_readable;
 	t_flag				display_hidden;
 	t_flag				is_one_column;
+	t_flag				is_many_args;
 }						t_options;
 
 extern t_options		g_options;
+extern const char		*g_allowed_options;
 
 #endif

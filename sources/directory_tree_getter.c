@@ -57,7 +57,7 @@ static inline void		update_longest(t_longest_strs *l_strs,
 	l_strs->file_size = ft_max(l_strs->file_size, ft_count_digits(filestruct->file_size));
 }
 
-t_dirstruct				*get_dir_btree(char *dirname, size_t relative_path_name_len)
+t_dirstruct				*get_dir_btree(const char *dirname, size_t relative_path_name_len)
 {
 	t_dirstruct		*dirstruct;
 	t_filestruct	*filestruct;
@@ -70,11 +70,12 @@ t_dirstruct				*get_dir_btree(char *dirname, size_t relative_path_name_len)
 	{
 		if (errno == ENOTDIR)
 		{
+			file_info.dirent = NULL;
 			lstat(dirname, &file_info.file);
 			avl_insert_data(&dirstruct->tree, get_filestruct(ft_strdup(dirname), relative_path_name_len, FALSE, &file_info), generic_cmpfunc);
 		}
 		else
-			ft_printf("./ft_ls: %s: %s\n", dirname, strerror(errno));
+			ft_printf_fd(STDERR_FILENO, "./ft_ls: %s: %s\n", dirname, strerror(errno));
 		return (dirstruct);
 	}
 	while ((file_info.dirent = readdir(dir)))
@@ -83,9 +84,12 @@ t_dirstruct				*get_dir_btree(char *dirname, size_t relative_path_name_len)
 			continue ;
 		relative_path_name = get_new_path_name(&file_info, dirname, &relative_path_name_len);
 		if (lstat(relative_path_name, &file_info.file) == FT_ERR)
+		{
+			free(relative_path_name);
 			return (dirstruct);
+		}
 		if (is_dir_not_dot(file_info.file.st_mode, file_info.dirent->d_name)) // !  эта штука нужна только для -R
-			avl_insert_data(&dirstruct->tree, get_filestruct(relative_path_name, relative_path_name_len, TRUE, &file_info), generic_cmpfunc);
+			avl_insert_data(&dirstruct->tree, get_filestruct(ft_strdup(relative_path_name), relative_path_name_len, TRUE, &file_info), generic_cmpfunc);
 
 		filestruct = get_filestruct(relative_path_name, file_info.dirent->d_namlen, FALSE, &file_info);
 		avl_insert_data(&dirstruct->tree, filestruct, generic_cmpfunc);

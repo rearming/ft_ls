@@ -12,6 +12,8 @@
 
 #include "ft_ls.h"
 
+const char	*g_allowed_options;
+
 t_options	default_options(void)
 {
 	return ((t_options)
@@ -23,7 +25,8 @@ t_options	default_options(void)
 		.time_mode = MODIFICATION,
 		.human_readable = FALSE,
 		.display_hidden = FALSE,
-		.is_one_column = FALSE
+		.is_one_column = FALSE,
+		.is_many_args = FALSE
 	});
 }
 
@@ -66,8 +69,11 @@ void		parse_options_pack(char *pack, t_options *options)
 	int		i;
 
 	i = 0;
+	pack++;
 	while (pack[i])
 	{
+		if (!ft_strchr(g_allowed_options, pack[i]))
+			raise_error(pack[i]);
 		options->is_verbose = option(pack[i], 'l', options->is_verbose);
 		options->is_recursive = option(pack[i], 'R', options->is_recursive);
 		options->sort_reverse = option(pack[i], 'r', options->sort_reverse);
@@ -91,7 +97,7 @@ t_options	get_options(char **args, int options_num, int *first_filename)
 		return (options);
 	while (i < options_num)
 	{
-		if (args[i][0] != '-')
+		if (args[i][0] != '-' || (args[i][0] == '-' && (!ft_strchr(g_allowed_options, args[i][1]) || !args[i][1])))
 			return (options);
 		parse_options_pack(args[i], &options);
 		(*first_filename)++;

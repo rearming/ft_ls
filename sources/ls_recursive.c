@@ -16,7 +16,7 @@
 
 void	recursion_callback(const t_filestruct *filestruct, const t_longest_strs *l_strs)
 {
-	if (filestruct->is_dir)
+	if (filestruct->is_dir_recursive)
 		ls_recursive(filestruct, FALSE);
 	else
 		print_file_formatted(filestruct, l_strs);
@@ -26,19 +26,26 @@ void	ls_recursive(const t_filestruct *filestruct, t_flag is_first_dir)
 {
 	t_dirstruct		*dirstruct;
 
-	//todo это все вынести в отдельную generic функцию, total будет всегда (когда директория),
-	// а имя директории только в случае рекурсии или нескольких указанных файлов
-	if (!is_first_dir)
-		ft_printf("%s%s:\n", g_options.is_verbose || g_options.is_one_column ? "\n" : "\n\n",
-				filestruct->filename); //полный относительный путь директории, которая в данный момент читается
+	print_entry_dir_path(filestruct->filename, is_first_dir,
+			g_options.is_verbose || g_options.is_one_column ? "\n" : "\n\n");
 	dirstruct = get_dir_btree(filestruct->filename, filestruct->total_len);
-	if (g_options.is_verbose && dirstruct->tree)
-		ft_printf("total %lli\n", dirstruct->total_blocks);
-
+	print_total(dirstruct);
 	if (dirstruct->tree)
 	{
 		ls_apply_inorder(dirstruct->tree, recursion_callback, &dirstruct->longest);
 		free_btree(dirstruct->tree, free_filestruct);
-		free(dirstruct);
 	}
+	free(dirstruct);
+}
+
+void	start_recursion(const char *dirname)
+{
+	t_filestruct		*filestruct;
+
+	filestruct = get_filestruct(
+			ft_strdup(dirname),
+			ft_strlen(dirname),
+			TRUE,NULL);
+	ls_recursive(filestruct, TRUE);
+	free_filestruct(filestruct);
 }

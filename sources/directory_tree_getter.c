@@ -21,20 +21,23 @@ static inline void		init_dirstruct(t_dirstruct **p_dirstruct)
 	(*p_dirstruct)->tree = NULL;
 }
 
-static inline char		*get_new_path_name(t_file_info *file_info, const char *prev_path_name,
-						   size_t *total_len)
+static inline char		*get_new_path_name(t_file_info *file_info,
+							const char *prev_path_name, size_t *total_len)
 {
 	char	*new_path_name;
 	size_t	new_path_size;
+	t_flag	not_root;
 
-	new_path_size = *total_len + file_info->dirent->d_namlen + 1; // +1 для '/'
-	if (!(new_path_name = (char*)malloc(sizeof(char) * new_path_size + 1))) // +1 для \0
+	not_root = !(prev_path_name[0] == '/' && prev_path_name[1] == '\0');
+	new_path_size = *total_len + file_info->dirent->d_namlen + not_root; // +1 для '/'
+	if (!(new_path_name = (char*)malloc(sizeof(char) * new_path_size + 1)))
 		raise_error(ERR_MALLOC);
 	ft_memcpy(new_path_name, prev_path_name, *total_len);
-	new_path_name[*total_len] = '/';
-	ft_memcpy(&new_path_name[*total_len + 1], file_info->dirent->d_name, file_info->dirent->d_namlen);
-	new_path_name[new_path_size] = 0; 	// если сначала сделать +2 в new_path_size тут все наебнется
-	// потому что '\0' добавится на один индекс позже, чем надо
+	if (not_root)
+		new_path_name[*total_len] = '/';
+	ft_memcpy(&new_path_name[*total_len + not_root],
+			file_info->dirent->d_name, file_info->dirent->d_namlen);
+	new_path_name[new_path_size] = 0;
 	*total_len = new_path_size;
 	return (new_path_name);
 }

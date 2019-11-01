@@ -54,6 +54,8 @@ inline t_filestruct *get_filestruct(char *relative_path_name, size_t total_len,
 	result->st_mode = file_info->file.st_mode;
 	if (file_info->dirent)
 		result->is_hidden = file_info->dirent->d_name[0] == '.' ? TRUE : FALSE;
+	result->major_nbr = major(file_info->file.st_rdev);
+	result->minor_nbr = minor(file_info->file.st_rdev);
 	result->last_access = file_info->file.st_atimespec.tv_sec;
 	result->last_modif = file_info->file.st_mtimespec.tv_sec;
 	result->last_change = file_info->file.st_ctimespec.tv_sec;

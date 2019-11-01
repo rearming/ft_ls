@@ -12,8 +12,6 @@
 
 #include "ft_ls.h"
 
-// 	-> ./ft_ls /  5.08s user 32.84s system 20% cpu 3:05.34 total
-
 void	recursion_callback(const t_filestruct *filestruct, const t_longest_strs *l_strs)
 {
 	if (filestruct->is_dir_recursive)

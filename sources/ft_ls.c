@@ -21,7 +21,7 @@ void get_directory_info(const char *filename, t_flag is_dir)
 	if (is_dir == TRUE)
 		print_entry_dir_path(filename, !g_options.is_many_args, "\n");
 	dirstruct = get_dir_btree(filename, ft_strlen(filename));
-	if (is_dir == TRUE)
+	if (is_dir == TRUE && !g_options.dirs_like_files)
 		print_total(dirstruct);
 	ls_apply_inorder(dirstruct->tree, print_file_formatted, &dirstruct->longest);
 	free_btree(dirstruct->tree, free_filestruct);
@@ -47,7 +47,7 @@ int		main(int argc, char **argv)
 
 	all_params = NULL;
 	first_filename = 0;
-	g_allowed_options = "lrR1hauctSf";
+	g_allowed_options = "lrR1hauctSfGdA";
 	g_options = get_options(++argv, --argc, &first_filename);
 	i = first_filename;
 	if (i + 1 < argc)
@@ -59,7 +59,8 @@ int		main(int argc, char **argv)
 		t_stat		stat;
 		const int lstat_ret = lstat(argv[i], &stat);
 		avl_insert_data(&all_params,
-				get_filestruct(ft_strdup(argv[i]), ft_strlen(argv[i]), lstat_ret == FT_ERR ? FT_ERR : S_ISDIR(stat.st_mode), NULL),
+				get_filestruct(ft_strdup(argv[i]), ft_strlen(argv[i]),
+						lstat_ret == FT_ERR ? FT_ERR : S_ISDIR(stat.st_mode), NULL),
 				generic_cmpfunc);
 		i++;
 	}

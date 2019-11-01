@@ -33,7 +33,8 @@ set(main
         sources/options_parser.c sources/print_formatted.c)
 
 set(test
-        tests/profiling_test.c tests/test_R.c)
+#        tests/profiling_test.c
+        tests/test_R.c)
 
 
 add_executable(ft_ls
@@ -48,6 +49,7 @@ target_link_libraries(ft_ls
 add_executable(test
         ${test}
         )
+
 
 target_link_libraries(test
         "ft"

@@ -51,7 +51,7 @@ static inline long	size_cmpfunc(void *dir1_ptr, void *dir2_ptr)
 
 	dir1 = (t_filestruct*)dir1_ptr;
 	dir2 = (t_filestruct*)dir2_ptr;
-	return (dir1->file_size - dir2->file_size);
+	return (dir2->file_size - dir1->file_size);
 }
 
 static inline int	no_cmpfunc(void *dir1_ptr, void *dir2_ptr)

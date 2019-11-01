@@ -25,6 +25,8 @@ typedef struct			s_filestruct
 	size_t				total_len;
 	t_flag				is_dir_recursive;
 	t_flag				is_hidden;
+	dev_t				major_nbr;
+	dev_t				minor_nbr;
 	nlink_t				hard_links;
 	char*				user_name;
 	char*				group_name;
@@ -44,6 +46,8 @@ typedef	struct			s_longest_strs
 	int					user_name;
 	int					group_name;
 	int					file_size;
+	int					major_nbr;
+	int 				minor_nbr;
 }						t_longest_strs;
 
 typedef	struct			s_dirstruct
@@ -86,7 +90,30 @@ typedef struct			s_options
 	t_flag				display_hidden;
 	t_flag				is_one_column;
 	t_flag				is_many_args;
+	t_flag				is_colored;
+	t_flag				hidden_no_dots;
+	t_flag				dirs_like_files;
 }						t_options;
+
+typedef struct			s_colors
+{
+	const int			len;
+	const int			reset_len;
+	const char			*esc;
+	const char			*reset;
+	const char			*red;
+	const char			*grey;
+	const char			*yellow;
+	const char			*blue;
+	const char			*magenta;
+	const char			*black;
+
+	const int			bg_len;
+	const char			*bg_black;
+	const char			*bg_green;
+	const char			*bg_yellow;
+	const char			*bg_cyan;
+}						t_colors;
 
 extern t_options		g_options;
 extern const char		*g_allowed_options;

@@ -20,13 +20,16 @@ t_options	default_options(void)
 	{
 		.is_verbose = FALSE,
 		.is_recursive = FALSE,
-		.sort_type = BY_ALPHA,
 		.sort_reverse = FALSE,
+		.sort_type = BY_ALPHA,
 		.time_mode = MODIFICATION,
 		.human_readable = FALSE,
 		.display_hidden = FALSE,
 		.is_one_column = FALSE,
-		.is_many_args = FALSE
+		.is_many_args = FALSE,
+		.is_colored = FALSE,
+		.hidden_no_dots = FALSE,
+		.dirs_like_files = FALSE,
 	});
 }
 
@@ -82,6 +85,9 @@ void		parse_options_pack(char *pack, t_options *options)
 		options->human_readable = option(pack[i], 'h', options->human_readable);
 		options->display_hidden = option(pack[i], 'a', options->display_hidden);
 		options->is_one_column = option(pack[i], '1', options->is_one_column);
+		options->is_colored = option(pack[i], 'G', options->is_colored);
+		options->hidden_no_dots = option(pack[i], 'A', options->hidden_no_dots);
+		options->dirs_like_files = option(pack[i], 'd', options->dirs_like_files);
 		i++;
 	}
 }
@@ -97,7 +103,7 @@ t_options	get_options(char **args, int options_num, int *first_filename)
 		return (options);
 	while (i < options_num)
 	{
-		if (args[i][0] != '-' || (args[i][0] == '-' && (!ft_strchr(g_allowed_options, args[i][1]) || !args[i][1])))
+		if (args[i][0] != '-' || (args[i][0] == '-' && (!args[i][1])))
 			return (options);
 		parse_options_pack(args[i], &options);
 		(*first_filename)++;

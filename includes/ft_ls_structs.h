@@ -16,7 +16,6 @@
 typedef struct dirent			t_dirent;
 typedef struct stat				t_stat;
 typedef int						t_flag;
-typedef int (*t_cmpfunc)(void*, void*);
 
 typedef struct			s_filestruct
 {
@@ -107,9 +106,11 @@ typedef struct			s_colors
 	const char			*blue;
 	const char			*magenta;
 	const char			*black;
+	const char			*white;
 
 	const int			bg_len;
 	const char			*bg_black;
+	const char			*bg_red;
 	const char			*bg_green;
 	const char			*bg_yellow;
 	const char			*bg_cyan;

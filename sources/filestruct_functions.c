@@ -19,12 +19,11 @@ inline int			is_dir_not_dot(mode_t st_mode, char *dirname)
 			&& !ft_strequ(dirname, ".."));
 }
 
-void				free_filestruct(void *filestruct_ptr)
+inline void			free_filestruct(void *filestruct_ptr)
 {
 	t_filestruct		*filestruct;
 
 	filestruct = (t_filestruct*)filestruct_ptr;
-
 	free(filestruct->filename);
 	free(filestruct->full_path);
 	free(filestruct->user_name);
@@ -32,7 +31,28 @@ void				free_filestruct(void *filestruct_ptr)
 	free(filestruct);
 }
 
-inline t_filestruct *get_filestruct(char *relative_path_name, size_t total_len,
+static inline void	parse_file_unfo(t_file_info *file_info,
+						t_filestruct *out_filestruct)
+{
+	if (file_info->dirent)
+		out_filestruct->is_hidden =
+				file_info->dirent->d_name[0] == '.' ? TRUE : FALSE;
+	out_filestruct->major_nbr = major(file_info->file.st_rdev);
+	out_filestruct->minor_nbr = minor(file_info->file.st_rdev);
+	out_filestruct->last_access = file_info->file.st_atimespec.tv_sec;
+	out_filestruct->last_modif = file_info->file.st_mtimespec.tv_sec;
+	out_filestruct->last_change = file_info->file.st_ctimespec.tv_sec;
+	out_filestruct->st_blocks = file_info->file.st_blocks;
+	out_filestruct->inode = file_info->file.st_ino;
+	out_filestruct->file_size = file_info->file.st_size;
+	out_filestruct->hard_links = file_info->file.st_nlink;
+	out_filestruct->user_name =
+			ft_strdup(getpwuid(file_info->file.st_uid)->pw_name);
+	out_filestruct->group_name =
+			ft_strdup(getgrgid(file_info->file.st_gid)->gr_name);
+}
+
+inline t_filestruct	*get_filestruct(char *relative_path_name, size_t total_len,
 						t_flag is_dir_recursive, t_file_info *file_info)
 {
 	t_filestruct		*result;
@@ -52,18 +72,6 @@ inline t_filestruct *get_filestruct(char *relative_path_name, size_t total_len,
 	if (!file_info)
 		return (result);
 	result->st_mode = file_info->file.st_mode;
-	if (file_info->dirent)
-		result->is_hidden = file_info->dirent->d_name[0] == '.' ? TRUE : FALSE;
-	result->major_nbr = major(file_info->file.st_rdev);
-	result->minor_nbr = minor(file_info->file.st_rdev);
-	result->last_access = file_info->file.st_atimespec.tv_sec;
-	result->last_modif = file_info->file.st_mtimespec.tv_sec;
-	result->last_change = file_info->file.st_ctimespec.tv_sec;
-	result->st_blocks = file_info->file.st_blocks;
-	result->inode = file_info->file.st_ino;
-	result->file_size = file_info->file.st_size;
-	result->hard_links = file_info->file.st_nlink;
-	result->user_name = ft_strdup(getpwuid(file_info->file.st_uid)->pw_name);
-	result->group_name = ft_strdup(getgrgid(file_info->file.st_gid)->gr_name);
+	parse_file_unfo(file_info, result);
 	return (result);
 }

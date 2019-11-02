@@ -25,6 +25,7 @@
 # include <limits.h>
 # include <sys/xattr.h>
 # include <sys/acl.h>
+# include <sys/ioctl.h>
 
 # include "libft.h"
 # include "ft_ls_structs.h"
@@ -38,19 +39,36 @@
 t_dirstruct 	*get_dir_btree(const char *dirname, size_t relative_path_name_len);
 void			start_recursion(const char *dirname);
 void			ls_recursive(const t_filestruct *filestruct, t_flag is_first_dir);
-t_options		get_options(char **args, int options_num, int *first_filename);
+void get_options(char **args, int options_num, int *first_filename);
 void			ls_apply_inorder(t_avl_tree *tree,
 		void (*applyf)(const t_filestruct*, const t_longest_strs*),
 		const t_longest_strs *l_strs);
 /*
-**	Formatted print functions
+**	Format print functions
 */
 void			print_file_formatted(const t_filestruct *filestruct,
 						const t_longest_strs *l_strs);
+
+/*
+**	Format print utils
+*/
+void			print_total(t_dirstruct *dirstruct);
 void			print_entry_dir_path(const char *filename, t_flag is_first_dir,
 						  char *prefix_eols);
-void			print_total(t_dirstruct *dirstruct);
+char			*get_file_size_or_major_minor(const t_filestruct *filestruct,
+					const t_longest_strs *l_strs, t_flag is_device);
+char			*get_rights(const char *path, const t_filestruct *filestruct);
+char			*get_link_str(const char *path, t_flag is_link, off_t link_len);
+char			*get_formatted_time(const t_filestruct *filestruct);
 
+/*
+**	Coloring
+*/
+
+const char	*choose_text_color(const char *rights);
+const char	*choose_bg_color(const char *rights);
+char		*get_colored_text(const char *str, const char *color,
+					const char *bg_color, size_t len);
 /*
 **	Comparers
 */

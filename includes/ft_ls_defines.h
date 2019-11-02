@@ -17,4 +17,8 @@
 # define NO_FILE_SPECIFIED (-1)
 # define SIX_MONTH 15552000
 
+# define USER 1
+# define GROUP 2
+# define OTHER 3
+
 #endif

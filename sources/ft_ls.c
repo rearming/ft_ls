@@ -12,9 +12,8 @@
 
 #include "ft_ls.h"
 
-t_options	g_options;
-
-void get_directory_info(const char *filename, t_flag is_dir)
+static inline void			get_directory_info(const char *filename,
+													t_flag is_dir)
 {
 	t_dirstruct		*dirstruct;
 
@@ -23,12 +22,13 @@ void get_directory_info(const char *filename, t_flag is_dir)
 	dirstruct = get_dir_btree(filename, ft_strlen(filename));
 	if (is_dir == TRUE && !g_options.dirs_like_files)
 		print_total(dirstruct);
-	ls_apply_inorder(dirstruct->tree, print_file_formatted, &dirstruct->longest);
+	ls_apply_inorder(
+			dirstruct->tree, print_file_formatted, &dirstruct->longest);
 	free_btree(dirstruct->tree, free_filestruct);
 	free(dirstruct);
 }
 
-void	process_dir(void *filestruct_ptr)
+static inline void			process_dir(void *filestruct_ptr)
 {
 	const t_filestruct	*filestruct = ((t_filestruct*)filestruct_ptr);
 	const char			*filename = filestruct->filename;
@@ -39,32 +39,42 @@ void	process_dir(void *filestruct_ptr)
 		get_directory_info(filename, filestruct->is_dir_recursive);
 }
 
-int		main(int argc, char **argv)
+static inline t_avl_tree	*get_args_btree(int first_filename,
+											int argc, char **argv)
 {
-	t_avl_tree	*all_params;
-	int			first_filename;
-	int			i;
+	t_avl_tree	*args_tree;
+	t_stat		stat;
+	int			lstat_ret;
 
-	all_params = NULL;
-	first_filename = 0;
-	g_allowed_options = "lrR1hauctSfGdA";
-	g_options = get_options(++argv, --argc, &first_filename);
-	i = first_filename;
-	if (i + 1 < argc)
-		g_options.is_many_args = TRUE;
-	if (i == argc)
-		process_dir(&(t_filestruct){.filename = ".", .is_dir_recursive = TRUE});
-	while (i < argc)
+	args_tree = NULL;
+	while (first_filename < argc)
 	{
-		t_stat		stat;
-		const int lstat_ret = lstat(argv[i], &stat);
-		avl_insert_data(&all_params,
-				get_filestruct(ft_strdup(argv[i]), ft_strlen(argv[i]),
-						lstat_ret == FT_ERR ? FT_ERR : S_ISDIR(stat.st_mode), NULL),
-				generic_cmpfunc);
-		i++;
+		lstat_ret = lstat(argv[first_filename], &stat);
+		avl_insert_data(&args_tree,
+			get_filestruct(
+				ft_strdup(argv[first_filename]),
+				ft_strlen(argv[first_filename]),
+				lstat_ret == FT_ERR ? FT_ERR : S_ISDIR(stat.st_mode),
+				NULL),
+			generic_cmpfunc);
+		first_filename++;
 	}
-	btree_apply_inorder((t_btree*)all_params, process_dir);
-	free_btree(all_params, free_filestruct);
+	return (args_tree);
+}
+
+int							main(int argc, char **argv)
+{
+	t_avl_tree	*args_tree;
+	int			first_filename;
+
+	first_filename = 0;
+	get_options(++argv, --argc, &first_filename);
+	if (first_filename + 1 < argc)
+		g_options.is_many_args = TRUE;
+	if (first_filename == argc)
+		process_dir(&(t_filestruct){.filename = ".", .is_dir_recursive = TRUE});
+	args_tree = get_args_btree(first_filename, argc, argv);
+	btree_apply_inorder((t_btree*)args_tree, process_dir);
+	free_btree(args_tree, free_filestruct);
 	return (0);
 }

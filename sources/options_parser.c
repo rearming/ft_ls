@@ -14,60 +14,53 @@
 
 const char	*g_allowed_options;
 
-t_options	default_options(void)
+t_options g_options =
 {
-	return ((t_options)
-	{
-		.is_verbose = FALSE,
-		.is_recursive = FALSE,
-		.sort_reverse = FALSE,
-		.sort_type = BY_ALPHA,
-		.time_mode = MODIFICATION,
-		.human_readable = FALSE,
-		.display_hidden = FALSE,
-		.is_one_column = FALSE,
-		.is_many_args = FALSE,
-		.is_colored = FALSE,
-		.hidden_no_dots = FALSE,
-		.dirs_like_files = FALSE,
-	});
-}
+	.is_verbose = FALSE,
+	.is_recursive = FALSE,
+	.sort_reverse = FALSE,
+	.sort_type = BY_ALPHA,
+	.time_mode = MODIFICATION,
+	.human_readable = FALSE,
+	.display_hidden = FALSE,
+	.is_one_column = FALSE,
+	.is_many_args = FALSE,
+	.is_colored = FALSE,
+	.hidden_no_dots = FALSE,
+	.dirs_like_files = FALSE,
+};
 
-static inline int	option(char actual_option, char expected_option, int set_option)
+static inline void	option(char actual_option, char expected_option,
+								int *set_option)
 {
-	if (!set_option)
-		return (actual_option == expected_option);
-	else
-		return (set_option);
+	if (!*set_option)
+	{
+		*set_option = actual_option == expected_option;
+		return ;
+	}
 }
 
 static inline int	get_sort_type(char actual_option, int set_option)
 {
-	if (!set_option)
-	{
-		if (actual_option == 't')
-			return (BY_TIME);
-		if (actual_option == 'S')
-			return (BY_SIZE);
-		if (actual_option == 'f')
-			return (NO_SORT);
-	}
+	if (actual_option == 't')
+		return (BY_TIME);
+	if (actual_option == 'S')
+		return (BY_SIZE);
+	if (actual_option == 'f')
+		return (NO_SORT);
 	return (set_option);
 }
 
 static inline int	get_time_mode(char actual_option, int set_option)
 {
-	if (!set_option)
-	{
-		if (actual_option == 'u')
-			return (ACCESS);
-		if (actual_option == 'c')
-			return (STATUS_MODIFICATION);
-	}
+	if (actual_option == 'u')
+		return (ACCESS);
+	if (actual_option == 'c')
+		return (STATUS_MODIFICATION);
 	return (set_option);
 }
 
-void		parse_options_pack(char *pack, t_options *options)
+static void			parse_options_pack(char *pack)
 {
 	int		i;
 
@@ -77,37 +70,37 @@ void		parse_options_pack(char *pack, t_options *options)
 	{
 		if (!ft_strchr(g_allowed_options, pack[i]))
 			raise_error(pack[i]);
-		options->is_verbose = option(pack[i], 'l', options->is_verbose);
-		options->is_recursive = option(pack[i], 'R', options->is_recursive);
-		options->sort_reverse = option(pack[i], 'r', options->sort_reverse);
-		options->time_mode = get_time_mode(pack[i], options->time_mode);
-		options->sort_type = get_sort_type(pack[i], options->sort_type);
-		options->human_readable = option(pack[i], 'h', options->human_readable);
-		options->display_hidden = option(pack[i], 'a', options->display_hidden);
-		options->is_one_column = option(pack[i], '1', options->is_one_column);
-		options->is_colored = option(pack[i], 'G', options->is_colored);
-		options->hidden_no_dots = option(pack[i], 'A', options->hidden_no_dots);
-		options->dirs_like_files = option(pack[i], 'd', options->dirs_like_files);
+		option(pack[i], 'l', &g_options.is_verbose);
+		option(pack[i], 'R', &g_options.is_recursive);
+		option(pack[i], 'r', &g_options.sort_reverse);
+		g_options.time_mode = get_time_mode(pack[i], g_options.time_mode);
+		g_options.sort_type = get_sort_type(pack[i], g_options.sort_type);
+		option(pack[i], 'h', &g_options.human_readable);
+		option(pack[i], 'a', &g_options.display_hidden);
+		option(pack[i], '1', &g_options.is_one_column);
+		option(pack[i], 'G', &g_options.is_colored);
+		option(pack[i], 'A', &g_options.hidden_no_dots);
+		option(pack[i], 'd', &g_options.dirs_like_files);
 		i++;
 	}
 }
 
-t_options	get_options(char **args, int options_num, int *first_filename)
+const char	*g_allowed_options = "lrR1hauctSfGdA";
+
+void				get_options(char **args, int options_num,
+						int *first_filename)
 {
-	t_options	options;
-	int			i;
+	int		i;
 
 	i = 0;
-	options = default_options();
 	if (options_num == 0)
-		return (options);
+		return ;
 	while (i < options_num)
 	{
 		if (args[i][0] != '-' || (args[i][0] == '-' && (!args[i][1])))
-			return (options);
-		parse_options_pack(args[i], &options);
+			return ;
+		parse_options_pack(args[i]);
 		(*first_filename)++;
 		i++;
 	}
-	return (options);
 }

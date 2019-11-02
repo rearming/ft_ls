@@ -63,7 +63,7 @@ static inline int	no_cmpfunc(void *dir1_ptr, void *dir2_ptr)
 
 inline int			generic_cmpfunc(void *dir1_ptr, void *dir2_ptr)
 {
-	long			result;
+	long				result;
 	t_filestruct		*dir1;
 	t_filestruct		*dir2;
 

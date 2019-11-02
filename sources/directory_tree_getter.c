@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   directory_btree_getter.c                           :+:      :+:    :+:   */
+/*   directory_tree_getter.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sleonard <sleonard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -26,7 +26,7 @@ static inline t_flag	is_root(const char *path_name)
 	return ((path_name[0] == '/' && path_name[1] == '\0'));
 }
 
-static inline char		*get_new_path_name(t_file_info *file_info,
+static char				*get_new_path_name(t_file_info *file_info,
 							const char *prev_path_name, size_t *total_len)
 {
 	char	*new_path_name;
@@ -41,8 +41,8 @@ static inline char		*get_new_path_name(t_file_info *file_info,
 	ft_memcpy(new_path_name, prev_path_name, *total_len);
 	if (!root)
 		new_path_name[*total_len] = '/';
-
-	ft_memcpy(&new_path_name[*total_len + !root], file_info->dirent->d_name, file_info->dirent->d_namlen);
+	ft_memcpy(&new_path_name[*total_len + !root],
+			file_info->dirent->d_name, file_info->dirent->d_namlen);
 	new_path_name[new_path_size] = 0;
 	*total_len = new_path_size;
 	return (new_path_name);
@@ -97,7 +97,7 @@ t_dirstruct				*get_dir_btree(const char *dirname, size_t relative_path_name_len
 	}
 	while ((file_info.dirent = readdir(dir)))
 	{
-		if (!check_hidden(file_info.dirent->d_name)) // если не задана -a пропустить скрытые (но мы не пропустим начальную, потому что проверяется d_name!)
+		if (!check_hidden(file_info.dirent->d_name))
 			continue ;
 		relative_path_name = get_new_path_name(&file_info, dirname, &relative_path_name_len);
 		if (lstat(relative_path_name, &file_info.file) == FT_ERR)
@@ -113,7 +113,7 @@ t_dirstruct				*get_dir_btree(const char *dirname, size_t relative_path_name_len
 
 		update_longest(&dirstruct->longest, filestruct);
 		relative_path_name_len -= file_info.dirent->d_namlen + !is_root(dirname);
-		dirstruct->total_blocks += filestruct->st_blocks; //для 'total'
+		dirstruct->total_blocks += filestruct->st_blocks;
 	}
 	closedir(dir);
 	return (dirstruct);

@@ -14,11 +14,19 @@
 # define FT_LS_DEFINES_H
 
 # define FT_ERR (-1)
-# define NO_FILE_SPECIFIED (-1)
 # define SIX_MONTH 15552000
 
 # define USER 1
 # define GROUP 2
 # define OTHER 3
+
+# define KB 1024L
+# define KB_LOW 1024L * 9L
+
+# define MB 1024L * 1024L
+# define MB_LOW 1024L * 1024L * 9L
+
+# define GB_LOW 1024L * 1024L * 1024L * 9L
+# define GB 1024L * 1024L * 1024L
 
 #endif

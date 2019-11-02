@@ -32,7 +32,7 @@ set(main
         sources/filestruct_functions.c
         sources/options_parser.c
         sources/format_print.c
-        sources/rights_field_getter.c sources/coloring.c sources/format_print_utils.c)
+        sources/rights_field_getter.c sources/coloring.c sources/format_print_utils.c sources/size_print_utils.c)
 
 set(test
 #        tests/profiling_test.c

@@ -67,6 +67,10 @@ int							main(int argc, char **argv)
 	t_avl_tree	*args_tree;
 	int			first_filename;
 
+	struct winsize w;
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+	printf("term width: [%u], height: [%u]\n", w.ws_col, w.ws_row);
+
 	first_filename = 0;
 	get_options(++argv, --argc, &first_filename);
 	if (first_filename + 1 < argc)

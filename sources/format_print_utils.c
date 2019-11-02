@@ -1,5 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   format_print_utils.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sleonard <sleonard@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/10/28 19:22:56 by sleonard          #+#    #+#             */
+/*   Updated: 2019/10/28 20:51:42 by sleonard         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_ls.h"
-#include <math.h>
 
 inline char		*get_formatted_time(const t_filestruct *filestruct)
 {
@@ -49,67 +60,4 @@ inline void		print_entry_dir_path(const char *filename, t_flag is_first_dir,
 	if (is_first_dir)
 		return ;
 	ft_printf("%s%s:\n", prefix_eols, filename);
-}
-
-inline void		print_total(t_dirstruct *dirstruct)
-{
-	if (g_options.is_verbose && dirstruct->tree)
-		ft_printf("total %lli\n", dirstruct->total_blocks);
-}
-
-static inline long long ft_round(double nbr)
-{
-	if ((long long)(nbr + 0.5) == (long long)nbr + 1)
-		return ((long long)nbr + 1);
-	else
-		return ((long long)nbr);
-}
-
-static inline char	*get_human_readable_size(off_t file_size)
-{
-	char		*result;
-	const int	width = 4;
-
-	if (file_size - 1024 < 0)
-		ft_sprintf(&result, "%*lliB", width, file_size);
-	else if (file_size - 1024 * 1024 < 0)
-	{
-		if (file_size - 1024 * 9 < 0)
-			ft_sprintf(&result, "%*.1fK", width, (double)file_size / 1024);
-		else
-			ft_sprintf(&result, "%*lliK", width, ft_round((double)file_size / 1024));
-	}
-	else if (file_size - 1024 * 1024 * 1024 < 0)
-	{
-		if (file_size - 1024 * 1024 * 9 < 0)
-			ft_sprintf(&result, "%*.1fM", width, (double)file_size / (1024 * 1024));
-		else
-			ft_sprintf(&result, "%*lliM", width, ft_round((double)file_size / (1024 * 1024)));
-	}
-	else
-	{
-		if (file_size - 1024L * 1024L * 1024L * 9L < 0)
-			ft_sprintf(&result, "%*.1fG", width, (double)file_size / (1024 * 1024 * 1024));
-		else
-			ft_sprintf(&result, "%*lliG", width, ft_round((double)file_size / (1024 * 1024 * 1024)));
-	}
-	return (result);
-}
-
-inline char		*get_file_size_or_major_minor(const t_filestruct *filestruct,
-					const t_longest_strs *l_strs, t_flag is_device)
-{
-	char		*field;
-
-	if (!is_device)
-	{
-		if (!g_options.human_readable)
-			ft_sprintf(&field, "%*lli", l_strs->file_size, filestruct->file_size);
-		else
-			field = get_human_readable_size(filestruct->file_size);
-		return (field);
-	}
-	ft_sprintf(&field, "%*i, %*i", l_strs->major_nbr,
-		filestruct->major_nbr, l_strs->minor_nbr, filestruct->minor_nbr);
-	return (field);
 }

@@ -12,8 +12,6 @@
 
 #include "ft_ls.h"
 
-const char	*g_allowed_options;
-
 t_options g_options =
 {
 	.is_verbose = FALSE,
@@ -68,7 +66,7 @@ static void			parse_options_pack(char *pack)
 	pack++;
 	while (pack[i])
 	{
-		if (!ft_strchr(g_allowed_options, pack[i]))
+		if (!ft_strchr(ALLOWED_OPTIONS, pack[i]))
 			raise_error(pack[i]);
 		option(pack[i], 'l', &g_options.is_verbose);
 		option(pack[i], 'R', &g_options.is_recursive);
@@ -84,8 +82,6 @@ static void			parse_options_pack(char *pack)
 		i++;
 	}
 }
-
-const char	*g_allowed_options = "lrR1hauctSfGdA";
 
 void				get_options(char **args, int options_num,
 						int *first_filename)

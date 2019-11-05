@@ -24,6 +24,8 @@ static inline void			get_directory_info(const char *filename,
 		print_total(dirstruct);
 	ls_apply_inorder(
 			dirstruct->tree, print_file_formatted, &dirstruct->longest);
+	if (!g_options.is_verbose)
+		ft_putchar('\n');
 	free_btree(dirstruct->tree, free_filestruct);
 	free(dirstruct);
 }
@@ -64,13 +66,12 @@ static inline t_avl_tree	*get_args_btree(int first_filename,
 
 int							main(int argc, char **argv)
 {
-	t_avl_tree	*args_tree;
-	int			first_filename;
+	t_avl_tree		*args_tree;
+	int				first_filename;
+	struct winsize	winsize;
 
-	struct winsize w;
-	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-	printf("term width: [%u], height: [%u]\n", w.ws_col, w.ws_row);
-
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &winsize);
+	g_term_width = winsize.ws_col;
 	first_filename = 0;
 	get_options(++argv, --argc, &first_filename);
 	if (first_filename + 1 < argc)

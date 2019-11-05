@@ -20,13 +20,16 @@
 # define GROUP 2
 # define OTHER 3
 
-# define KB 1024L
-# define KB_LOW 1024L * 9L
+# define KB (1024L)
+# define KB_LOW (1024L * 9L)
 
-# define MB 1024L * 1024L
-# define MB_LOW 1024L * 1024L * 9L
+# define MB (1024L * 1024L)
+# define MB_LOW (1024L * 1024L * 9L)
 
-# define GB_LOW 1024L * 1024L * 1024L * 9L
-# define GB 1024L * 1024L * 1024L
+# define GB_LOW (1024L * 1024L * 1024L * 9L)
+# define GB (1024L * 1024L * 1024L)
+
+# define TERM_OFFSET 60
+# define ALLOWED_OPTIONS "lrR1hauctSfGdA"
 
 #endif

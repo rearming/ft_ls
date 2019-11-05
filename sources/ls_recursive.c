@@ -12,6 +12,8 @@
 
 #include "ft_ls.h"
 
+int		g_line_len = 0;
+
 void	recursion_callback(const t_filestruct *filestruct,
 							const t_longest_strs *l_strs)
 {
@@ -27,7 +29,7 @@ void	ls_recursive(const t_filestruct *filestruct, t_flag is_first_dir)
 
 	print_entry_dir_path(filestruct->filename, is_first_dir,
 		g_options.is_verbose || g_options.is_one_column ? "\n" : "\n\n");
-	dirstruct = get_dir_btree(filestruct->filename, filestruct->total_len);
+	dirstruct = get_dir_btree(filestruct->filename, filestruct->filename_len);
 	print_total(dirstruct);
 	if (dirstruct->tree)
 	{
@@ -47,5 +49,7 @@ void	start_recursion(const char *dirname)
 			ft_strlen(dirname),
 			TRUE, NULL);
 	ls_recursive(filestruct, TRUE);
+	if (!g_options.is_verbose)
+		ft_putchar('\n');
 	free_filestruct(filestruct);
 }

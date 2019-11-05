@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_errors.h                                        :+:      :+:    :+:   */
+/*   ft_ls_errors.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sleonard <sleonard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FT_ERRORS_H
-# define FT_ERRORS_H
+#ifndef FT_LS_ERRORS_H
+# define FT_LS_ERRORS_H
 
 # define ERR_MALLOC 100
 # define ERR_NULL_LIST 101

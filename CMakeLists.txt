@@ -27,12 +27,15 @@ set(main
         sources/ft_ls.c
         sources/ls_recursive.c
         sources/error.c
-        sources/directory_tree_getter.c
+        sources/dir_tree_getter.c
         sources/compare_functions.c
         sources/filestruct_functions.c
         sources/options_parser.c
         sources/format_print.c
-        sources/rights_field_getter.c sources/coloring.c sources/format_print_utils.c sources/size_print_utils.c)
+        sources/rights_field_getter.c
+        sources/coloring.c
+        sources/format_print_utils.c
+        sources/size_print_utils.c sources/dir_tree_utils.c)
 
 set(test
 #        tests/profiling_test.c

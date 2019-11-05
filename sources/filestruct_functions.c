@@ -68,7 +68,7 @@ inline t_filestruct	*get_filestruct(char *relative_path_name, size_t total_len,
 				file_info->dirent->d_namlen);
 	else
 		result->filename = ft_strdup(relative_path_name);
-	result->total_len = total_len;
+	result->filename_len = total_len;
 	if (!file_info)
 		return (result);
 	result->st_mode = file_info->file.st_mode;

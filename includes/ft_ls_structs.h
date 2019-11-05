@@ -21,20 +21,20 @@ typedef struct			s_filestruct
 {
 	char				*filename;
 	char				*full_path;
-	size_t				total_len;
+	size_t				filename_len;
 	t_flag				is_dir_recursive;
 	t_flag				is_hidden;
 	dev_t				major_nbr;
 	dev_t				minor_nbr;
 	nlink_t				hard_links;
-	char*				user_name;
-	char*				group_name;
+	char				*user_name;
+	char				*group_name;
 	off_t				file_size;
 	time_t				last_access;
 	time_t				last_modif;
 	time_t				last_change;
 	mode_t				st_mode;
-	blkcnt_t			st_blocks; //то, что показывается в total
+	blkcnt_t			st_blocks;
 	__uint64_t			inode;
 }						t_filestruct;
 
@@ -46,7 +46,7 @@ typedef	struct			s_longest_strs
 	int					group_name;
 	int					file_size;
 	int					major_nbr;
-	int 				minor_nbr;
+	int					minor_nbr;
 }						t_longest_strs;
 
 typedef	struct			s_dirstruct
@@ -54,7 +54,7 @@ typedef	struct			s_dirstruct
 	t_avl_tree			*tree;
 	long long			total_blocks;
 	t_longest_strs		longest;
-	//todo для выравнивания по терминалу может понадобиться (кол-во файлов * макс размер имени) чтобы поставить \n
+	int					files_num;
 }						t_dirstruct;
 
 typedef struct			s_file_info
@@ -106,7 +106,6 @@ typedef struct			s_colors
 	const char			*blue;
 	const char			*magenta;
 	const char			*black;
-	const char			*white;
 
 	const int			bg_len;
 	const char			*bg_black;
@@ -117,6 +116,7 @@ typedef struct			s_colors
 }						t_colors;
 
 extern t_options		g_options;
-extern const char		*g_allowed_options;
+extern int				g_line_len;
+extern int				g_term_width;
 
 #endif

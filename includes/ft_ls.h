@@ -36,27 +36,41 @@
 **	Core functions
 */
 
-t_dirstruct 	*get_dir_btree(const char *dirname, size_t relative_path_name_len);
+t_dirstruct		*get_dir_btree(const char *dirname, size_t path_len);
 void			start_recursion(const char *dirname);
-void			ls_recursive(const t_filestruct *filestruct, t_flag is_first_dir);
-void get_options(char **args, int options_num, int *first_filename);
+void			ls_recursive(const t_filestruct *filestruct,
+		t_flag is_first_dir);
+void			get_options(char **args, int options_num, int *first_filename);
 void			ls_apply_inorder(t_avl_tree *tree,
 		void (*applyf)(const t_filestruct*, const t_longest_strs*),
 		const t_longest_strs *l_strs);
+
+/*
+**	Directory tree utils
+*/
+
+void			init_dirstruct(t_dirstruct **p_dirstruct);
+t_flag			is_root(const char *path_name);
+char			*get_new_path_name(t_file_info *file_info,
+		const char *prev_path_name, size_t *total_len);
+int				check_hidden(const char *filename);
+void			update_longest(t_longest_strs *l_strs,
+		t_filestruct *filestruct);
+
 /*
 **	Format print functions
 */
 void			print_file_formatted(const t_filestruct *filestruct,
-						const t_longest_strs *l_strs);
+		const t_longest_strs *l_strs);
 
 /*
 **	Format print utils
 */
 void			print_total(t_dirstruct *dirstruct);
 void			print_entry_dir_path(const char *filename, t_flag is_first_dir,
-						  char *prefix_eols);
+		char *prefix_eols);
 char			*get_file_size_or_major_minor(const t_filestruct *filestruct,
-					const t_longest_strs *l_strs, t_flag is_device);
+		const t_longest_strs *l_strs, t_flag is_device);
 char			*get_rights(const char *path, const t_filestruct *filestruct);
 char			*get_link_str(const char *path, t_flag is_link, off_t link_len);
 char			*get_formatted_time(const t_filestruct *filestruct);
@@ -65,10 +79,10 @@ char			*get_formatted_time(const t_filestruct *filestruct);
 **	Coloring
 */
 
-const char	*choose_text_color(const char *rights);
-const char	*choose_bg_color(const char *rights);
-char		*get_colored_text(const char *str, const char *color,
-					const char *bg_color, size_t len);
+const char		*choose_text_color(const char *rights);
+const char		*choose_bg_color(const char *rights);
+char			*get_colored_text(const char *str, const char *color,
+		const char *bg_color, size_t len);
 /*
 **	Comparers
 */
@@ -78,8 +92,8 @@ int				generic_cmpfunc(void *dir1_ptr, void *dir2_ptr);
 **	Helpers
 */
 
-t_filestruct	*get_filestruct(char *relative_path_name, size_t total_len, t_flag is_dir_recursive,
-							 t_file_info *file_info);
+t_filestruct	*get_filestruct(char *relative_path_name,
+		size_t total_len, t_flag is_dir_recursive, t_file_info *file_info);
 void			free_filestruct(void *filestruct_ptr);
 int				is_dir_not_dot(mode_t st_mode, char *dirname);
 

@@ -12,6 +12,8 @@
 
 #include "ft_ls.h"
 
+int					g_term_width;
+
 void				ls_apply_inorder(t_avl_tree *tree,
 		void (*applyf)(const t_filestruct*, const t_longest_strs*),
 		const t_longest_strs *l_strs)
@@ -52,6 +54,21 @@ void				print_verbose(const t_filestruct *filestruct,
 	free(size_field);
 }
 
+static inline void	print_no_options(const t_longest_strs *l_strs,
+										const char *colored_filename)
+{
+	if (g_line_len + TERM_OFFSET >= g_term_width)
+	{
+		ft_printf("%-*s\n", l_strs->filename + 1, colored_filename);
+		g_line_len = 0;
+	}
+	else
+	{
+		ft_printf("%-*s", l_strs->filename + 1, colored_filename);
+		g_line_len += l_strs->filename + 1;
+	}
+}
+
 void				print_file_formatted(const t_filestruct *filestruct,
 											const t_longest_strs *l_strs)
 {
@@ -65,13 +82,13 @@ void				print_file_formatted(const t_filestruct *filestruct,
 	colored_filename = get_colored_text(filestruct->filename,
 			choose_text_color(rights),
 			choose_bg_color(rights),
-			filestruct->total_len);
+			filestruct->filename_len);
 	if (!g_options.is_verbose)
 	{
 		if (g_options.is_one_column)
 			ft_printf("%s\n", colored_filename);
 		else
-			ft_printf("%-*s", l_strs->filename + 2, colored_filename); //todo сделать по размеру терминала
+			print_no_options(l_strs, colored_filename);
 	}
 	else
 		print_verbose(filestruct, l_strs, colored_filename, rights);

@@ -12,8 +12,6 @@
 
 #include "ft_ls.h"
 
-const char	*g_allowed_options;
-
 void	raise_error(int err_code)
 {
 	if (err_code == ERR_LSTAT)
@@ -23,7 +21,7 @@ void	raise_error(int err_code)
 	else
 	{
 		ft_printf("./ft_ls: illegal option -- %c\n", err_code);
-		ft_printf("usage: ls [%s] [file ...]\n", g_allowed_options);
+		ft_printf("usage: ls [%s] [file ...]\n", ALLOWED_OPTIONS);
 	}
 	exit(err_code);
 }

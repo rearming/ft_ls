@@ -66,6 +66,8 @@ static inline char	get_exec_right(const t_filestruct *filestruct, char type)
 		return ('t');
 	else if (mode & S_ISVTX && !(mode & S_IXOTH))
 		return ('T');
+	if (mode & S_IXUSR && mode & S_IXGRP)
+		return ('x');
 	return ('-');
 }
 

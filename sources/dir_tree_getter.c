@@ -29,7 +29,7 @@ static inline DIR		*get_dir(const char *dirname, t_dirstruct *dirstruct,
 		}
 		else
 			ft_printf_fd(STDERR_FILENO,
-					"./ft_ls: %s: %s\n", dirname, strerror(errno));
+					"ft_ls: %s: %s\n", dirname, strerror(errno));
 		if (dir)
 			closedir(dir);
 		return (NULL);

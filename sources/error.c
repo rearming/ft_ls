@@ -20,7 +20,7 @@ void	raise_error(int err_code)
 		ft_printf("readlink() failed, errno: [%s]\n", strerror(errno));
 	else
 	{
-		ft_printf("./ft_ls: illegal option -- %c\n", err_code);
+		ft_printf("ft_ls: illegal option -- %c\n", err_code);
 		ft_printf("usage: ls [%s] [file ...]\n", ALLOWED_OPTIONS);
 	}
 	exit(err_code);

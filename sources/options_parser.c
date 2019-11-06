@@ -89,6 +89,8 @@ void				get_options(char **args, int options_num,
 	int		i;
 
 	i = 0;
+	if (!isatty(fileno(stdout)))
+		g_options.is_one_column = TRUE;
 	if (options_num == 0)
 		return ;
 	while (i < options_num)

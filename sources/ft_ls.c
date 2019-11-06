@@ -24,7 +24,7 @@ static inline void			get_directory_info(const char *filename,
 		print_total(dirstruct);
 	ls_apply_inorder(
 			dirstruct->tree, print_file_formatted, &dirstruct->longest);
-	if (!g_options.is_verbose)
+	if (!g_options.is_verbose && !g_options.is_one_column)
 		ft_putchar('\n');
 	free_btree(dirstruct->tree, free_filestruct);
 	free(dirstruct);
@@ -41,35 +41,57 @@ static inline void			process_dir(void *filestruct_ptr)
 		get_directory_info(filename, filestruct->is_dir_recursive);
 }
 
-static inline t_avl_tree	*get_args_btree(int first_filename,
-											int argc, char **argv)
+static inline void			get_args_btrees(int argc, char **argv,
+		t_avl_tree **files_tree, t_avl_tree **dirs_tree)
 {
-	t_avl_tree	*args_tree;
+	DIR			*dir;
 	t_stat		stat;
 	int			lstat_ret;
+	int			i;
 
-	args_tree = NULL;
-	while (first_filename < argc)
+	i = 0;
+	while (i < argc)
 	{
-		lstat_ret = lstat(argv[first_filename], &stat);
-		avl_insert_data(&args_tree,
-			get_filestruct(
-				ft_strdup(argv[first_filename]),
-				ft_strlen(argv[first_filename]),
-				lstat_ret == FT_ERR ? FT_ERR : S_ISDIR(stat.st_mode),
-				NULL),
-			generic_cmpfunc);
-		first_filename++;
+		lstat_ret = lstat(argv[i], &stat);
+		if (!(dir = opendir(argv[i])) && errno != ENOTDIR)
+			ft_printf_fd(STDERR_FILENO,	"ft_ls: %s: %s\n", argv[i], strerror(errno));
+		else if (!g_options.dirs_like_files && lstat_ret != FT_ERR && S_ISDIR(stat.st_mode))
+			avl_insert_data(dirs_tree,
+					get_filestruct(ft_strdup(argv[i]), ft_strlen(argv[i]), TRUE, NULL),
+					generic_cmpfunc);
+		else
+			avl_insert_data(files_tree,
+					get_filestruct(ft_strdup(argv[i]), ft_strlen(argv[i]),FALSE,NULL),
+					generic_cmpfunc);
+		if (dir)
+			closedir(dir);
+		i++;
 	}
-	return (args_tree);
+}
+
+void						print_files_args(t_avl_tree *files_tree)
+{
+	int				longest_str;
+	t_longest_strs	l_strs;
+
+	if (!files_tree)
+		return ;
+	longest_str = 0;
+	l_strs.filename = longest_str;
+	ls_apply_inorder(files_tree, print_file_formatted, &l_strs);
+	if (!g_options.is_one_column)
+		ft_putchar('\n');
 }
 
 int							main(int argc, char **argv)
 {
-	t_avl_tree		*args_tree;
+	t_avl_tree		*files_tree;
+	t_avl_tree		*dirs_tree;
 	int				first_filename;
 	struct winsize	winsize;
 
+	files_tree = NULL;
+	dirs_tree = NULL;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &winsize);
 	g_term_width = winsize.ws_col;
 	first_filename = 0;
@@ -78,8 +100,16 @@ int							main(int argc, char **argv)
 		g_options.is_many_args = TRUE;
 	if (first_filename == argc)
 		process_dir(&(t_filestruct){.filename = ".", .is_dir_recursive = TRUE});
-	args_tree = get_args_btree(first_filename, argc, argv);
-	btree_apply_inorder((t_btree*)args_tree, process_dir);
-	free_btree(args_tree, free_filestruct);
+
+	get_args_btrees(argc - first_filename, &argv[first_filename], &files_tree, &dirs_tree);
+
+	if (!g_options.is_verbose && !g_options.is_one_column)
+		print_files_args(files_tree);
+	else
+		btree_apply_inorder((t_btree*)files_tree, process_dir);
+	btree_apply_inorder((t_btree*)dirs_tree, process_dir);
+
+	free_btree(dirs_tree, free_filestruct);
+	free_btree(files_tree, free_filestruct);
 	return (0);
 }

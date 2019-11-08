@@ -13,17 +13,18 @@
 #ifndef FT_LS_STRUCTS_H
 # define FT_LS_STRUCTS_H
 
+typedef struct passwd			t_passwd;
+typedef struct group			t_group;
 typedef struct dirent			t_dirent;
 typedef struct stat				t_stat;
-typedef int						t_flag;
+typedef int						t_bool;
 
 typedef struct			s_filestruct
 {
 	char				*filename;
 	char				*full_path;
 	size_t				filename_len;
-	t_flag				is_dir_recursive;
-	t_flag				is_hidden;
+	t_bool				is_dir_recursive;
 	dev_t				major_nbr;
 	dev_t				minor_nbr;
 	nlink_t				hard_links;
@@ -35,7 +36,6 @@ typedef struct			s_filestruct
 	time_t				last_change;
 	mode_t				st_mode;
 	blkcnt_t			st_blocks;
-	__uint64_t			inode;
 }						t_filestruct;
 
 typedef	struct			s_longest_strs
@@ -80,18 +80,20 @@ typedef enum			e_time_modes
 
 typedef struct			s_options
 {
-	t_flag				is_verbose;
-	t_flag				is_recursive;
-	t_flag				sort_reverse;
+	t_bool				is_verbose;
+	t_bool				is_recursive;
+	t_bool				sort_reverse;
 	t_sort_type			sort_type;
 	t_time_modes		time_mode;
-	t_flag				human_readable;
-	t_flag				display_hidden;
-	t_flag				is_one_column;
-	t_flag				is_many_args;
-	t_flag				is_colored;
-	t_flag				hidden_no_dots;
-	t_flag				dirs_like_files;
+	t_bool				human_readable;
+	t_bool				display_hidden;
+	t_bool				is_one_column;
+	t_bool				is_colored;
+	t_bool				hidden_no_dots;
+	t_bool				dirs_like_files;
+	t_bool				is_many_files;
+	t_bool				is_many_dirs;
+	t_bool				is_first_eol;
 }						t_options;
 
 typedef struct			s_colors
@@ -106,6 +108,7 @@ typedef struct			s_colors
 	const char			*blue;
 	const char			*magenta;
 	const char			*black;
+	const char			*green;
 
 	const int			bg_len;
 	const char			*bg_black;

@@ -30,20 +30,19 @@ static inline char	get_extended_attr(const char *path)
 	return (result);
 }
 
-static inline char	get_user_exec_right(unsigned int mode)
+static inline char	get_user_or_group_exec_right(unsigned int mode, int type)
 {
-	if (mode & S_ISUID && mode & S_IXUSR)
-		return ('s');
-	else if (mode & S_ISUID && !(mode & S_IXUSR))
-		return ('S');
-	else if (!(mode & S_ISUID) && mode & S_IXUSR)
-		return ('x');
-	else
-		return ('-');
-}
-
-static inline char	get_group_exec_right(unsigned int mode)
-{
+	if (type == USER)
+	{
+		if (mode & S_ISUID && mode & S_IXUSR)
+			return ('s');
+		else if (mode & S_ISUID && !(mode & S_IXUSR))
+			return ('S');
+		else if (!(mode & S_ISUID) && mode & S_IXUSR)
+			return ('x');
+		else
+			return ('-');
+	}
 	if (mode & S_ISGID && mode & S_IXGRP)
 		return ('s');
 	else if (mode & S_ISGID && !(mode & S_IXGRP))
@@ -58,10 +57,8 @@ static inline char	get_exec_right(const t_filestruct *filestruct, char type)
 {
 	const unsigned int mode = filestruct->st_mode;
 
-	if (type == USER)
-		return (get_user_exec_right(filestruct->st_mode));
-	if (type == GROUP)
-		return (get_group_exec_right(filestruct->st_mode));
+	if (type == USER || type == GROUP)
+		return (get_user_or_group_exec_right(filestruct->st_mode, type));
 	if (mode & S_ISVTX && mode & S_IXOTH)
 		return ('t');
 	else if (mode & S_ISVTX && !(mode & S_IXOTH))
@@ -71,6 +68,24 @@ static inline char	get_exec_right(const t_filestruct *filestruct, char type)
 	return ('-');
 }
 
+static inline char	get_file_type(unsigned int mode)
+{
+	if (S_ISDIR(mode))
+		return ('d');
+	else if (S_ISBLK(mode))
+		return ('b');
+	else if (S_ISCHR(mode))
+		return ('c');
+	else if (S_ISLNK(mode))
+		return ('l');
+	else if (S_ISSOCK(mode))
+		return ('s');
+	else if (S_ISFIFO(mode))
+		return ('p');
+	else
+		return ('-');
+}
+
 inline char			*get_rights(const char *path,
 						const t_filestruct *filestruct)
 {
@@ -78,13 +93,7 @@ inline char			*get_rights(const char *path,
 
 	if (!(rights = (char*)malloc(12)))
 		raise_error(ERR_MALLOC);
-	rights[0] = S_ISDIR(filestruct->st_mode) ? 'd' : '-';
-	if (S_ISBLK(filestruct->st_mode))
-		rights[0] = 'b';
-	else if (S_ISCHR(filestruct->st_mode))
-		rights[0] = 'c';
-	else if (S_ISLNK(filestruct->st_mode))
-		rights[0] = 'l';
+	rights[0] = get_file_type(filestruct->st_mode);
 	rights[1] = (filestruct->st_mode & S_IRUSR) ? 'r' : '-';
 	rights[2] = (filestruct->st_mode & S_IWUSR) ? 'w' : '-';
 	rights[3] = get_exec_right(filestruct, USER);

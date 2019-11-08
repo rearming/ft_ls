@@ -12,9 +12,15 @@
 
 #include "ft_ls.h"
 
-inline void				print_total(t_dirstruct *dirstruct)
+inline void				print_total(t_dirstruct *dirstruct,
+		const char *filename)
 {
-	if (g_options.is_verbose && dirstruct->tree)
+	t_stat	stat;
+	t_bool	link_noprint;
+
+	link_noprint = ((lstat(filename, &stat) != FT_ERR
+			&& S_ISLNK(stat.st_mode) && g_options.is_verbose));
+	if (g_options.is_verbose && dirstruct->tree && !link_noprint)
 		ft_printf("total %lli\n", dirstruct->total_blocks);
 }
 
@@ -27,7 +33,7 @@ static inline long long	ft_round(double nbr)
 }
 
 static inline void		get_human_readable_size(off_t file_size,
-													char **out_size)
+		char **out_size)
 {
 	const int	w = 4;
 
@@ -58,7 +64,7 @@ static inline void		get_human_readable_size(off_t file_size,
 
 inline char				*get_file_size_or_major_minor(
 		const t_filestruct *filestruct, const t_longest_strs *l_strs,
-		t_flag is_device)
+		t_bool is_device)
 {
 	char		*field;
 

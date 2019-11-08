@@ -23,6 +23,7 @@ const t_colors		g_colors =
 	.blue = "\x1b[34m",
 	.magenta = "\x1b[35m",
 	.black = "\x1b[30m",
+	.green = "\x1b[32m",
 
 	.bg_len = 5,
 	.bg_black = "\x1b[40m",
@@ -34,6 +35,10 @@ const t_colors		g_colors =
 
 inline const char	*choose_text_color(const char *rights)
 {
+	if (rights[0] == 's')
+		return (g_colors.green);
+	if (rights[0] == 'p')
+		return (g_colors.yellow);
 	if (rights[0] == 'd')
 		return (g_colors.blue);
 	if (rights[0] == 'l')

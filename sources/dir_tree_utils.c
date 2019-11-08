@@ -22,7 +22,7 @@ inline void		init_dirstruct(t_dirstruct **p_dirstruct)
 	(*p_dirstruct)->tree = NULL;
 }
 
-inline t_flag	is_root(const char *path_name)
+inline t_bool	is_root(const char *path_name)
 {
 	return ((path_name[0] == '/' && path_name[1] == '\0'));
 }
@@ -32,7 +32,7 @@ char			*get_new_path_name(t_file_info *file_info,
 {
 	char	*new_path_name;
 	size_t	new_path_size;
-	t_flag	root;
+	t_bool	root;
 
 	root = is_root(prev_path_name);
 	new_path_size = *total_len + file_info->dirent->d_namlen + !root;

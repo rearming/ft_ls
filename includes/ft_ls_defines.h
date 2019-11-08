@@ -15,6 +15,7 @@
 
 # define FT_ERR (-1)
 # define SIX_MONTH 15552000
+# define ONE_HOUR 3600
 
 # define USER 1
 # define GROUP 2

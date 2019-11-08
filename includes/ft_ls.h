@@ -36,10 +36,13 @@
 **	Core functions
 */
 
+void			get_args_btrees(int argc, char **argv, t_avl_tree **files_tree,
+		t_avl_tree **dirs_tree);
+void			process_dir(void *filestruct_ptr);
 t_dirstruct		*get_dir_btree(const char *dirname, size_t path_len);
 void			start_recursion(const char *dirname);
 void			ls_recursive(const t_filestruct *filestruct,
-		t_flag is_first_dir);
+		t_bool is_first_dir);
 void			get_options(char **args, int options_num, int *first_filename);
 void			ls_apply_inorder(t_avl_tree *tree,
 		void (*applyf)(const t_filestruct*, const t_longest_strs*),
@@ -50,7 +53,7 @@ void			ls_apply_inorder(t_avl_tree *tree,
 */
 
 void			init_dirstruct(t_dirstruct **p_dirstruct);
-t_flag			is_root(const char *path_name);
+t_bool			is_root(const char *path_name);
 char			*get_new_path_name(t_file_info *file_info,
 		const char *prev_path_name, size_t *total_len);
 int				check_hidden(const char *filename);
@@ -60,19 +63,20 @@ void			update_longest(t_longest_strs *l_strs,
 /*
 **	Format print functions
 */
+int				print_files_args(t_avl_tree *files_tree, t_bool is_dir_btree);
 void			print_file_formatted(const t_filestruct *filestruct,
 		const t_longest_strs *l_strs);
 
 /*
 **	Format print utils
 */
-void			print_total(t_dirstruct *dirstruct);
-void			print_entry_dir_path(const char *filename, t_flag is_first_dir,
+void			print_total(t_dirstruct *dirstruct, const char *filename);
+void			print_entry_dir_path(const char *filename, t_bool is_first_dir,
 		char *prefix_eols);
 char			*get_file_size_or_major_minor(const t_filestruct *filestruct,
-		const t_longest_strs *l_strs, t_flag is_device);
+		const t_longest_strs *l_strs, t_bool is_device);
 char			*get_rights(const char *path, const t_filestruct *filestruct);
-char			*get_link_str(const char *path, t_flag is_link, off_t link_len);
+char			*get_link_str(const char *path, t_bool is_link, off_t link_len);
 char			*get_formatted_time(const t_filestruct *filestruct);
 
 /*
@@ -93,9 +97,12 @@ int				generic_cmpfunc(void *dir1_ptr, void *dir2_ptr);
 */
 
 t_filestruct	*get_filestruct(char *relative_path_name,
-		size_t total_len, t_flag is_dir_recursive, t_file_info *file_info);
+		size_t total_len, t_bool is_dir_recursive, t_file_info *file_info);
 void			free_filestruct(void *filestruct_ptr);
 int				is_dir_not_dot(mode_t st_mode, char *dirname);
+t_bool			dir_exists(const char *filename);
+void			get_winsize(void);
+int				process_no_args(void);
 
 /*
 **	Error management

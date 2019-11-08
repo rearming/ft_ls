@@ -35,7 +35,8 @@ set(main
         sources/rights_field_getter.c
         sources/coloring.c
         sources/format_print_utils.c
-        sources/size_print_utils.c sources/dir_tree_utils.c)
+        sources/size_print_utils.c
+        sources/dir_tree_utils.c sources/args_processor.c sources/utils.c)
 
 set(test
 #        tests/profiling_test.c

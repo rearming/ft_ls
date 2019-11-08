@@ -12,20 +12,31 @@
 
 #include "ft_ls.h"
 
+static inline t_bool	check_link_nofollow(const char *dirname, mode_t st_mode)
+{
+	return (S_ISLNK(st_mode) && g_options.is_verbose)
+	|| (!dir_exists(dirname) && !g_options.is_recursive && errno == ENOENT);
+}
+
 static inline DIR		*get_dir(const char *dirname, t_dirstruct *dirstruct,
 									size_t relative_path_name_len)
 {
 	DIR				*dir;
 	t_file_info		file_info;
+	t_filestruct	*filestruct;
+	t_bool			link_nofollow;
 
-	if (!(dir = opendir(dirname)) || g_options.dirs_like_files)
+	link_nofollow = lstat(dirname, &file_info.file) != FT_ERR ?
+			check_link_nofollow(dirname, file_info.file.st_mode) : FALSE;
+	if (!(dir = opendir(dirname)) || g_options.dirs_like_files || link_nofollow)
 	{
-		if (errno == ENOTDIR || g_options.dirs_like_files)
+		if (errno == ENOTDIR || g_options.dirs_like_files || link_nofollow)
 		{
 			file_info.dirent = NULL;
-			lstat(dirname, &file_info.file);
-			avl_insert_data(&dirstruct->tree, get_filestruct(ft_strdup(dirname),
-				relative_path_name_len, FALSE, &file_info), generic_cmpfunc);
+			filestruct = get_filestruct(ft_strdup(dirname),
+					relative_path_name_len, FALSE, &file_info);
+			update_longest(&dirstruct->longest, filestruct);
+			avl_insert_data(&dirstruct->tree, filestruct, generic_cmpfunc);
 		}
 		else
 			ft_printf_fd(STDERR_FILENO,

@@ -12,32 +12,47 @@
 
 #include "ft_ls.h"
 
-inline char		*get_formatted_time(const t_filestruct *filestruct)
+static inline time_t	get_timestamp(const t_filestruct *filestruct)
 {
-	char		*result;
-	time_t		timestamp;
-
 	if (g_options.time_mode == MODIFICATION)
-		timestamp = filestruct->last_modif;
+		return (filestruct->last_modif);
 	if (g_options.time_mode == ACCESS)
-		timestamp = filestruct->last_access;
+		return (filestruct->last_access);
 	if (g_options.time_mode == STATUS_MODIFICATION)
-		timestamp = filestruct->last_change;
+		return (filestruct->last_change);
+	return (0);
+}
+
+inline char				*get_formatted_time(const t_filestruct *filestruct)
+{
+	char				*result;
+	const time_t		timestamp = get_timestamp(filestruct);
+
 	result = ctime(&timestamp);
-	result[24] = 0;
 	result = &result[4];
-	if (time(NULL) - timestamp >= SIX_MONTH)
+	if (time(NULL) - timestamp >= SIX_MONTH
+	|| timestamp - time(NULL) >= ONE_HOUR)
 	{
-		ft_memcpy(&result[7], &result[15], 5);
+		if (ft_atoi(&result[20]) < 9999)
+		{
+			ft_memcpy(&result[7], &result[15], 5);
+			result[12] = '\0';
+		}
+		else
+		{
+			ft_memcpy(&result[8], &result[20], 6);
+			result[13] = '\0';
+		}
 		result[6] = ' ';
-		result[12] = '\0';
+		result[7] = ' ';
 	}
 	else
 		result[12] = '\0';
 	return (result);
 }
 
-inline char		*get_link_str(const char *path, t_flag is_link, off_t link_len)
+inline char				*get_link_str(const char *path, t_bool is_link,
+		off_t link_len)
 {
 	const char	arrow[] = " -> ";
 	char		*link_str;
@@ -54,8 +69,8 @@ inline char		*get_link_str(const char *path, t_flag is_link, off_t link_len)
 	return (link_str);
 }
 
-inline void		print_entry_dir_path(const char *filename, t_flag is_first_dir,
-											char *prefix_eols)
+inline void				print_entry_dir_path(const char *filename,
+		t_bool is_first_dir, char *prefix_eols)
 {
 	if (is_first_dir)
 		return ;

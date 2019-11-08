@@ -22,10 +22,11 @@ t_options g_options =
 	.human_readable = FALSE,
 	.display_hidden = FALSE,
 	.is_one_column = FALSE,
-	.is_many_args = FALSE,
 	.is_colored = FALSE,
 	.hidden_no_dots = FALSE,
 	.dirs_like_files = FALSE,
+	.is_many_dirs = -1,
+	.is_many_files = -1,
 };
 
 static inline void	option(char actual_option, char expected_option,
@@ -79,6 +80,10 @@ static void			parse_options_pack(char *pack)
 		option(pack[i], 'G', &g_options.is_colored);
 		option(pack[i], 'A', &g_options.hidden_no_dots);
 		option(pack[i], 'd', &g_options.dirs_like_files);
+		g_options.is_verbose =
+			g_options.is_verbose ? pack[i] != '1' : g_options.is_verbose;
+		g_options.is_one_column =
+			g_options.is_one_column ? pack[i] != 'l' : g_options.is_one_column;
 		i++;
 	}
 }
@@ -97,6 +102,11 @@ void				get_options(char **args, int options_num,
 	{
 		if (args[i][0] != '-' || (args[i][0] == '-' && (!args[i][1])))
 			return ;
+		if (args[i][0] == '-' && args[i][1] == '-' && !args[i][2])
+		{
+			(*first_filename)++;
+			return ;
+		}
 		parse_options_pack(args[i]);
 		(*first_filename)++;
 		i++;

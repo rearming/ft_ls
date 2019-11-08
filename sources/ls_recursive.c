@@ -23,14 +23,17 @@ void	recursion_callback(const t_filestruct *filestruct,
 		print_file_formatted(filestruct, l_strs);
 }
 
-void	ls_recursive(const t_filestruct *filestruct, t_flag is_first_dir)
+void	ls_recursive(const t_filestruct *filestruct, t_bool is_first_dir)
 {
 	t_dirstruct		*dirstruct;
+	char			*pref_eols;
 
+	pref_eols = g_options.is_verbose || g_options.is_one_column ? "\n" : "\n\n";
 	print_entry_dir_path(filestruct->filename, is_first_dir,
-		g_options.is_verbose || g_options.is_one_column ? "\n" : "\n\n");
+			!g_options.is_first_eol ? "" : pref_eols);
+	g_options.is_first_eol = TRUE;
 	dirstruct = get_dir_btree(filestruct->filename, filestruct->filename_len);
-	print_total(dirstruct);
+	print_total(dirstruct, filestruct->filename);
 	if (dirstruct->tree)
 	{
 		ls_apply_inorder(dirstruct->tree, recursion_callback,
@@ -48,8 +51,7 @@ void	start_recursion(const char *dirname)
 			ft_strdup(dirname),
 			ft_strlen(dirname),
 			TRUE, NULL);
-	ls_recursive(filestruct, TRUE);
-	if (!g_options.is_verbose)
-		ft_putchar('\n');
+	ls_recursive(filestruct,
+			!g_options.is_many_files || !g_options.is_many_dirs);
 	free_filestruct(filestruct);
 }

@@ -37,16 +37,12 @@ static inline void	parse_file_unfo(t_file_info *file_info,
 	t_passwd	*passwd;
 	t_group		*group;
 
-	if (file_info->dirent)
-		out_filestruct->is_hidden =
-				file_info->dirent->d_name[0] == '.' ? TRUE : FALSE;
 	out_filestruct->major_nbr = major(file_info->file.st_rdev);
 	out_filestruct->minor_nbr = minor(file_info->file.st_rdev);
 	out_filestruct->last_access = file_info->file.st_atimespec.tv_sec;
 	out_filestruct->last_modif = file_info->file.st_mtimespec.tv_sec;
 	out_filestruct->last_change = file_info->file.st_ctimespec.tv_sec;
 	out_filestruct->st_blocks = file_info->file.st_blocks;
-	out_filestruct->inode = file_info->file.st_ino;
 	out_filestruct->file_size = file_info->file.st_size;
 	out_filestruct->hard_links = file_info->file.st_nlink;
 	passwd = getpwuid(file_info->file.st_uid);
